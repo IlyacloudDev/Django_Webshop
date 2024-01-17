@@ -1,0 +1,84 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+<!-- Подключаем новый файл с нашим тегом -->
+{% load custom_tags %}
+
+{% block title %}
+Products
+{% endblock title %}
+
+{% block content %}
+    <h1>Все товары</h1>
+    {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+    <form action="" method="get">
+        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+        {{ filterset.form.as_p }}
+        {# Добавим кнопку отправки данных формы #}
+        <input type="submit" value="Найти" />
+    </form>
+
+    <hr>
+
+    <a href="{% url 'product_create' %}">Добавить Товар</a>
+
+    <h3>{% current_time '%b %d %Y' %}</h3>
+    <!-- Если в переменной next_sale будет None,
+    то выведется указанный в фильтре текст -->
+    <h3> {{ next_sale|default_if_none:"Чуть позже сообщим о распродаже!" }} </h3>
+
+    {% if products %}
+        <table>
+            <tr>
+                <td>Название</td>
+                <td>Описание</td>
+                <td>Категория</td>
+                <td>Цена</td>
+                <td>Количество</td>
+                <td>Действие</td>
+            </tr>
+
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description|truncatewords:2 }}</td>
+                <td>{{ product.category.name }}</td>
+                <!-- Используем наш фильтр -->
+                <td>{{ product.price|currency:'rub' }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>
+                    <a href="{% url 'product_update' product.id %}">Изменить</a>
+                </td>
+                <td>
+                    <a href="{% url 'product_delete' product.id %}">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    {% else %}
+        <h2>Товаров нет!</h2>
+    {% endif %}
+
+    {# Добавляем пагинацию на страницу #}
+
+    {% if page_obj.has_previous %}
+        {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{% url_replace page=page_obj.previous_page_number %   }">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+   {% endif %}
+
+{% endblock content %}
