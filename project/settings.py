@@ -56,11 +56,21 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+
+
 ACCOUNT_EMAIL_REQUIRED = True
+
 ACCOUNT_UNIQUE_EMAIL = True
+
 ACCOUNT_USERNAME_REQUIRED = False
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
+LOGIN_REDIRECT_URL = "/products"
 
 
 SITE_ID = 1
@@ -149,13 +159,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
-LOGIN_REDIRECT_URL = "/products"
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
